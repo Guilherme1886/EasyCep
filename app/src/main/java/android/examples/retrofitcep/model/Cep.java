@@ -35,6 +35,17 @@ public class Cep {
     @SerializedName("gia")
     private String gia;
 
+    @SerializedName("erro")
+    private String erro;
+
+    public String getErro() {
+        return erro;
+    }
+
+    public void setErro(String erro) {
+        this.erro = erro;
+    }
+
     public Cep() {
     }
 

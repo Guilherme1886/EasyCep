@@ -9,6 +9,7 @@ import android.examples.retrofitcep.utils.Utils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,16 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void getJson() {
 
+
         restAdapter = new RestAdapter.Builder().setEndpoint(ApiInterface.URL).build();
-
         apiInterface = restAdapter.create(ApiInterface.class);
-
         button_user.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                String editTextCep = cep_user.getText().toString();
+                final String editTextCep = cep_user.getText().toString();
 
                 if (editTextCep.length() <= 0) {
 
@@ -68,44 +68,81 @@ public class MainActivity extends AppCompatActivity {
 
                     getProgress();
 
-                    apiInterface.getCep(editTextCep, new Callback<Cep>() {
-
+                    new Thread() {
                         @Override
-                        public void success(Cep cepResponse, Response response) {
+                        public void run() {
+                            try {
+                                apiInterface.getCep(editTextCep, new Callback<Cep>() {
 
-                            cep.setText(cepResponse.getCep());
-                            logradouro.setText(cepResponse.getLogradouro());
-                            complemento.setText(cepResponse.getComplemento());
-                            bairro.setText(cepResponse.getBairro());
-                            localidade.setText(cepResponse.getLocalidade());
-                            uf.setText(cepResponse.getUf());
+                                    @Override
+                                    public void success(Cep cepResponse, Response response) {
 
-                            progressDialog.cancel();
+                                        if (cepResponse.getErro() != null) {
+                                            if (cepResponse.getErro().equals("true")) {
+                                                Utils.hideKeyboard(MainActivity.this);
+                                                Utils.showSnack(MainActivity.this, "CEP não encontrado");
+                                                clearTextView();
+                                            }
 
-                        }
+                                        } else {
+                                            cep.setText(cepResponse.getCep());
+                                            logradouro.setText(cepResponse.getLogradouro());
+                                            complemento.setText(cepResponse.getComplemento());
+                                            bairro.setText(cepResponse.getBairro());
+                                            localidade.setText(cepResponse.getLocalidade());
+                                            uf.setText(cepResponse.getUf());
 
-                        @Override
-                        public void failure(RetrofitError error) {
 
-                            progressDialog.cancel();
+                                            Utils.hideKeyboard(MainActivity.this);
+                                            clearField();
 
-                            if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
-                                Utils.showSnack(MainActivity.this, "Não há conexão com a internet");
+                                        }
+
+                                        progressDialog.cancel();
+
+
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError error) {
+
+                                        progressDialog.cancel();
+
+                                        if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
+                                            Utils.showSnack(MainActivity.this, "Não há conexão com a internet");
+                                        }
+
+
+                                    }
+                                });
+
+
+                            } catch (Exception e) {
+
+                                Log.e("error", e.getMessage());
+
                             }
 
 
                         }
-                    });
+                    }.start();
+
                 }
-
-                clearField();
-
             }
 
 
         });
 
 
+    }
+
+    private void clearTextView() {
+        cep.setText("");
+        logradouro.setText("");
+        complemento.setText("");
+        bairro.setText("");
+        localidade.setText("");
+        uf.setText("");
     }
 
     private void clearField() {
