@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Retrofit CEP</string>
+    <string name="app_name">EasyCep</string>
+    <string name="ver_no_mapa">VER NO MAPA</string>
+    <string name="google_maps_key">AIzaSyBjjSRlWiKOxLXIsui0HqTeh33OXBSuTj4</string>
 </resources>
