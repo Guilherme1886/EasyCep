@@ -3,11 +3,10 @@ package android.examples.retrofitcep.activity
 import android.Manifest
 import android.app.ProgressDialog
 import android.examples.retrofitcep.R
-import android.examples.retrofitcep.rest.DataCEP
+import android.examples.retrofitcep.rest.request_via_cep.DataCEP
 import android.examples.retrofitcep.utils.Mask
 import android.examples.retrofitcep.utils.Utils
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
@@ -23,6 +22,7 @@ class MainActivity : PermissionsActivity() {
 
     private lateinit var progressDialog: ProgressDialog
     private var cepMask: TextWatcher? = null
+    private var address = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,12 +44,12 @@ class MainActivity : PermissionsActivity() {
 
         requestPermissions(listPermissions, object : PermissionCallBack {
             override fun permissionGranted() {
-               // super.permissionGranted()
+                // super.permissionGranted()
                 Log.v("Call permissions", "Granted")
             }
 
             override fun permissionDenied() {
-              //  super.permissionDenied()
+                //  super.permissionDenied()
 
                 Log.v("Call permissions", "Denied")
             }
@@ -107,6 +107,9 @@ class MainActivity : PermissionsActivity() {
                                 Utils.hideKeyboard(this@MainActivity)
                                 clearField()
 
+                                address = "${logradouro.text} ${bairro.text}"
+
+
 
                             } else {
 
@@ -160,7 +163,5 @@ class MainActivity : PermissionsActivity() {
 
     }
 
-    fun buttonVerNoMapa(view: View) = startActivity<MapaActivity>()
-
-
+    fun buttonVerNoMapa(view: View) = startActivity<MapaActivity>("address" to address)
 }

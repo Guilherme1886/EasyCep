@@ -1,4 +1,4 @@
-package android.examples.retrofitcep.rest
+package android.examples.retrofitcep.rest.request_via_cep
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
